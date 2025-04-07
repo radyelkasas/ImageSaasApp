@@ -1,5 +1,8 @@
+import Header from "@/components/shared/Header";
+
+// Make the component async
 const AddTransformationsPage = () => {
-  return <div>AddTransformationsPage</div>;
+  return <Header title={"Transformation"} subtitle={"subTitle"} />;
 };
 
 export default AddTransformationsPage;

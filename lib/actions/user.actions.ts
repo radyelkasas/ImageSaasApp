@@ -5,10 +5,12 @@ import { revalidatePath } from "next/cache";
 import User from "../database/models/user.model";
 import { connectToDatabase } from "../database/mongoose";
 import { handleError } from "../utils";
-import { CreateUserParams, UpdateUserParams } from "@/types/index";
+import { CreateUserParams, UpdateUserParams } from "@/types";
 
 // CREATE
 export async function createUser(user: CreateUserParams) {
+  console.log("createUser", user);
+
   try {
     await connectToDatabase();
 
@@ -22,6 +24,8 @@ export async function createUser(user: CreateUserParams) {
 
 // READ
 export async function getUserById(userId: string) {
+  console.log("getUserById", userId);
+
   try {
     await connectToDatabase();
 
@@ -37,6 +41,8 @@ export async function getUserById(userId: string) {
 
 // UPDATE
 export async function updateUser(clerkId: string, user: UpdateUserParams) {
+  console.log("updateUser", clerkId, user);
+
   try {
     await connectToDatabase();
 
@@ -54,6 +60,8 @@ export async function updateUser(clerkId: string, user: UpdateUserParams) {
 
 // DELETE
 export async function deleteUser(clerkId: string) {
+  console.log("deleteUser", clerkId);
+
   try {
     await connectToDatabase();
 
@@ -76,6 +84,7 @@ export async function deleteUser(clerkId: string) {
 
 // USE CREDITS
 export async function updateCredits(userId: string, creditFee: number) {
+  console.log("updateCredits", userId, creditFee);
   try {
     await connectToDatabase();
 

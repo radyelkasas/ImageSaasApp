@@ -19,7 +19,7 @@ const Layout = ({
       </div>
 
       {/* Main Content Area */}
-      <div className="root-container">
+      <div className="root-container lg:pl-[240px] lg:pr-[80px] xl:pl-[300px] xl:pr-[100px] 2xl:pl-[350px] 2xl:pr-[120px]">
         <div className="wrapper">{children}</div>
       </div>
     </div>

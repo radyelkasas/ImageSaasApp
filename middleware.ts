@@ -8,7 +8,7 @@ const isPublicRoute = (req: NextRequest) => {
     path === "/" ||
     path.startsWith("/sign-in") ||
     path.startsWith("/sign-up") ||
-    path.startsWith("/api/webhooks")
+    path.startsWith("/api/webhooks/clerk")
   );
 };
 
