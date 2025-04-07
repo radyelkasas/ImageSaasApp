@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import { Webhook } from "svix";
 import { headers } from "next/headers";
 import { WebhookEvent } from "@clerk/nextjs/server";
@@ -6,8 +7,7 @@ import { clerkClient } from "@clerk/clerk-sdk-node";
 import { createUser, deleteUser, updateUser } from "@/lib/actions/user.actions";
 
 export async function POST(req: Request) {
-  const SIGNING_SECRET =
-    process.env.WEBHOOK_SECRET || process.env.SIGNING_SECRET;
+  const SIGNING_SECRET = process.env.WEBHOOK_SECRET;
 
   if (!SIGNING_SECRET) {
     throw new Error(
@@ -19,10 +19,10 @@ export async function POST(req: Request) {
   const wh = new Webhook(SIGNING_SECRET);
 
   // Get headers
-  const headerPayload = headers();
-  const svix_id = (await headerPayload).get("svix-id");
-  const svix_timestamp = (await headerPayload).get("svix-timestamp");
-  const svix_signature = (await headerPayload).get("svix-signature");
+  const headerPayload = await headers();
+  const svix_id = headerPayload.get("svix-id");
+  const svix_timestamp = headerPayload.get("svix-timestamp");
+  const svix_signature = headerPayload.get("svix-signature");
 
   // If there are no headers, error out
   if (!svix_id || !svix_timestamp || !svix_signature) {
@@ -45,6 +45,7 @@ export async function POST(req: Request) {
       "svix-timestamp": svix_timestamp,
       "svix-signature": svix_signature,
     }) as WebhookEvent;
+    console.log("Webhook verified successfully");
   } catch (err) {
     console.error("Error: Could not verify webhook:", err);
     return new Response("Error: Verification error", {
