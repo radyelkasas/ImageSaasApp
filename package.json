@@ -16,6 +16,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.487.0",
+    "micro": "^10.0.1",
     "mongodb": "^6.15.0",
     "mongoose": "^8.13.2",
     "next": "15.2.4",
