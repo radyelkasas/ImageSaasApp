@@ -1,103 +1,111 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
-
-import User from "../database/models/user.model";
 import { connectToDatabase } from "../database/mongoose";
-import { handleError } from "../utils";
-import { CreateUserParams, UpdateUserParams } from "@/types";
+import User from "../database/models/user.model";
 
-// CREATE
-export async function createUser(user: CreateUserParams) {
-  console.log("createUser", user);
-
+// Create a new user
+export async function createUser(userData: {
+  clerkId: string;
+  email: string;
+  username: string;
+  firstName: string;
+  lastName: string;
+  photo: string;
+}) {
   try {
+    console.log("connecting From createUser...");
+
     await connectToDatabase();
 
-    const newUser = await User.create(user);
+    // Check if user already exists
+    const userExists = await User.findOne({ clerkId: userData.clerkId });
 
-    return JSON.parse(JSON.stringify(newUser));
-  } catch (error) {
-    handleError(error);
-  }
-}
-
-// READ
-export async function getUserById(userId: string) {
-  console.log("getUserById", userId);
-
-  try {
-    await connectToDatabase();
-
-    const user = await User.findOne({ clerkId: userId });
-
-    if (!user) throw new Error("User not found");
-
-    return JSON.parse(JSON.stringify(user));
-  } catch (error) {
-    handleError(error);
-  }
-}
-
-// UPDATE
-export async function updateUser(clerkId: string, user: UpdateUserParams) {
-  console.log("updateUser", clerkId, user);
-
-  try {
-    await connectToDatabase();
-
-    const updatedUser = await User.findOneAndUpdate({ clerkId }, user, {
-      new: true,
-    });
-
-    if (!updatedUser) throw new Error("User update failed");
-
-    return JSON.parse(JSON.stringify(updatedUser));
-  } catch (error) {
-    handleError(error);
-  }
-}
-
-// DELETE
-export async function deleteUser(clerkId: string) {
-  console.log("deleteUser", clerkId);
-
-  try {
-    await connectToDatabase();
-
-    // Find user to delete
-    const userToDelete = await User.findOne({ clerkId });
-
-    if (!userToDelete) {
-      throw new Error("User not found");
+    if (userExists) {
+      return userExists;
     }
 
-    // Delete user
-    const deletedUser = await User.findByIdAndDelete(userToDelete._id);
-    revalidatePath("/");
+    // Create a new user
+    const newUser = await User.create({
+      clerkId: userData.clerkId,
+      email: userData.email,
+      username: userData.username,
+      firstName: userData.firstName,
+      lastName: userData.lastName,
+      photo: userData.photo,
+      planId: "1", // Default plan ID
+      creditBalance: 10, // Default credit balance
+    });
 
-    return deletedUser ? JSON.parse(JSON.stringify(deletedUser)) : null;
+    return newUser;
   } catch (error) {
-    handleError(error);
+    console.error("Error creating user:", error);
+    throw error;
   }
 }
 
-// USE CREDITS
-export async function updateCredits(userId: string, creditFee: number) {
-  console.log("updateCredits", userId, creditFee);
+// Update user data
+export async function updateUser(
+  clerkId: string,
+  userData: {
+    firstName?: string;
+    lastName?: string;
+    username?: string;
+    photo?: string;
+  }
+) {
   try {
+    console.log("connecting From updateUser...");
+
     await connectToDatabase();
 
-    const updatedUserCredits = await User.findOneAndUpdate(
-      { _id: userId },
-      { $inc: { creditBalance: creditFee } },
+    // Find and update the user
+    const updatedUser = await User.findOneAndUpdate(
+      { clerkId },
+      { $set: userData },
       { new: true }
     );
 
-    if (!updatedUserCredits) throw new Error("User credits update failed");
+    if (!updatedUser) {
+      throw new Error("User not found");
+    }
 
-    return JSON.parse(JSON.stringify(updatedUserCredits));
+    return updatedUser;
   } catch (error) {
-    handleError(error);
+    console.error("Error updating user:", error);
+    throw error;
+  }
+}
+
+// Delete a user
+export async function deleteUser(clerkId: string) {
+  try {
+    console.log("connecting From deleteUser...");
+    await connectToDatabase();
+
+    // Find and delete the user
+    const deletedUser = await User.findOneAndDelete({ clerkId });
+
+    if (!deletedUser) {
+      throw new Error("User not found");
+    }
+
+    return deletedUser;
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    throw error;
+  }
+}
+
+// Find a user by Clerk ID
+export async function getUserByClerkId(clerkId: string) {
+  try {
+    console.log("connecting From getUserByClerkId...");
+    await connectToDatabase();
+
+    const user = await User.findOne({ clerkId });
+    return user;
+  } catch (error) {
+    console.error("Error finding user:", error);
+    throw error;
   }
 }

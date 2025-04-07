@@ -143,7 +143,6 @@ export const connectToDatabase = async (): Promise<Mongoose> => {
       );
       return connectToDatabase();
     }
-
     throw error;
   }
 };

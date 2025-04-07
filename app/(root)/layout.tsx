@@ -1,11 +1,14 @@
 import MobaileNav from "@/components/shared/MobaileNav";
 import Sidebar from "@/components/shared/Sidebar";
 
+
 const Layout = ({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) => {
+
+
   return (
     <div className="root">
       {/* Desktop Sidebar - only visible on lg screens and above */}

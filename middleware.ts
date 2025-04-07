@@ -1,10 +1,12 @@
 import { clerkMiddleware } from "@clerk/nextjs/server";
 
+// Use clerkMiddleware directly
 export default clerkMiddleware();
 
+// Configure matcher to EXCLUDE the /api/webhooks/clerk route
 export const config = {
   matcher: [
-    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest|api/webhooks/clerk)).*)",
-    "/(api(?!/webhooks/clerk))(.*)",
+    // Exclude webhook route and static files
+    "/((?!api/webhooks/clerk|_next/static|_next/image|favicon.ico).*)",
   ],
 };
