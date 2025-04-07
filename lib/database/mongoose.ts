@@ -12,9 +12,14 @@ interface MongoDBConnection {
   retryCount: number;
 }
 
+// Define a type for the global with mongoose property
+declare global {
+  // eslint-disable-next-line no-var
+  var mongoose: MongoDBConnection | undefined;
+}
+
 // Create global cached instance
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-let cached: MongoDBConnection = (global as any).mongoose || {
+const cached: MongoDBConnection = global.mongoose || {
   conn: null,
   promise: null,
   isConnecting: false,
@@ -22,8 +27,8 @@ let cached: MongoDBConnection = (global as any).mongoose || {
 };
 
 // Store cached instance globally if not exists
-if (!(global as any).mongoose) {
-  (global as any).mongoose = cached;
+if (!global.mongoose) {
+  global.mongoose = cached;
 }
 
 /**
@@ -95,7 +100,10 @@ export const connectToDatabase = async (): Promise<Mongoose> => {
   // 3. Prevent concurrent connection attempts
   if (cached.isConnecting) {
     console.log("⏳ Connection already in progress, waiting...");
-    return cached.promise!;
+    if (cached.promise) {
+      return cached.promise;
+    }
+    throw new Error("Connection in progress but promise is null");
   }
 
   try {
