@@ -1,16 +1,17 @@
 import mongoose, { Mongoose } from "mongoose";
 
-const MONGODB_URI =
-  process.env.MONGODB_URI || "mongodb://localhost:27017/mydatabase";
+const MONGODB_URI = process.env.MONGODB_URI;
 
 interface MongoDBConnection {
   conn: Mongoose | null;
   promise: Promise<Mongoose> | null;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 let cached: MongoDBConnection = (global as any).mongoose || null;
 
 if (!cached) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   cached = (global as any).mongoose = { conn: null, promise: null };
 }
 

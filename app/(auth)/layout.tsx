@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 const Layout = ({
   children,
 }: Readonly<{
@@ -7,16 +9,14 @@ const Layout = ({
     <main className="auth-layout">
       <div className="auth-container">
         <div className="auth-logo">
-          <img 
-            src="/assets/images/logo-text.svg" 
-            alt="Logo" 
-            width={180} 
-            height={28} 
+          <Image
+            src="/assets/images/logo-text.svg"
+            alt="Logo"
+            width={180}
+            height={28}
           />
         </div>
-        <div className="auth-card">
-          {children}
-        </div>
+        <div className="auth-card">{children}</div>
       </div>
     </main>
   );
